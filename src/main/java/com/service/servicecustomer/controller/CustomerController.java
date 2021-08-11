@@ -4,6 +4,8 @@ import com.service.servicecustomer.models.dto.CustomerDto;
 import com.service.servicecustomer.models.entities.Customer;
 import com.service.servicecustomer.service.CustomerServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,32 +19,34 @@ public class CustomerController {
 
     // Get all list of customer controller
     @GetMapping
-    public List<CustomerDto> showAll() {
-        return customerService.showAllCustomer();
+    public ResponseEntity showAll() {
+        return ResponseEntity.ok(customerService.showAllCustomer());
     }
 
     // Create new customer controller
     @PostMapping
-    public CustomerDto save(@RequestBody Customer customer) {
-        return customerService.saveCustomer(customer);
+    public ResponseEntity save(@RequestBody Customer customer) {
+
+        return ResponseEntity.ok(customerService.saveCustomer(customer));
     }
 
     // Edit customer name controller
     @PutMapping
-    public CustomerDto edit(@RequestBody Customer customer) {
-        return customerService.saveCustomer(customer);
+    public ResponseEntity edit(@RequestBody Customer customer) {
+
+        return ResponseEntity.ok(customerService.saveCustomer(customer));
     }
 
     // Delete (soft) customer controller
     // Hard delete is not recomended on this case
     @DeleteMapping("/{id}")
-    public String deleteById(@PathVariable("id") Long id) {
+    public ResponseEntity deleteById(@PathVariable("id") Long id) {
         Customer customer = customerService.findById(id);
         if (customer==null) {
-            return String.format("Customer with id %d not available", id);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("Customer with id %d not available", id));
         }
         customer.setIsDeleted(true);
         customerService.saveCustomer(customer);
-        return String.format("Customer with id %d has deleted", id);
+        return ResponseEntity.ok(String.format("Customer with id %d has deleted", id));
     }
 }
