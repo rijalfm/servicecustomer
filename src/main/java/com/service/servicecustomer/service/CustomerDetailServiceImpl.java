@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,6 +21,17 @@ public class CustomerDetailServiceImpl implements CustomerDetailService{
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Override
+    public List<CustomerDetailDto> showAllWithDetail() {
+        List<CustomerDetailDto> detailDtos = new ArrayList();
+        for (CustomerDetail customer : customerDetailRepo.findAllNotDeleted()) {
+            CustomerDetailDto data = modelMapper.map(customer, CustomerDetailDto.class);
+            data.setName(customer.getCustomer().getFirstName() + " " + customer.getCustomer().getLastName());
+            detailDtos.add(data);
+        }
+        return detailDtos;
+    }
 
     @Override
     public CustomerDetailDto showDetailById(Long id) {
